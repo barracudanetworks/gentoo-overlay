@@ -10,7 +10,7 @@ EGIT_COMMIT="HHVM-${PV}"
 
 IUSE="debug hack xen zend-compat"
 
-DESCRIPTION="Virtual Machine, Runtime, and JIT for PHP"
+DESCRIPTION="Virtual Machine, Runtime, and JIT for PHP and HACK"
 HOMEPAGE="https://github.com/facebook/hhvm"
 
 RDEPEND="
@@ -59,16 +59,9 @@ SLOT="0"
 LICENSE="PHP-3"
 KEYWORDS="amd64"
 
-pkg_setup() {
-	ebegin "Creating hhvm user and group"
-	enewgroup hhvm
-	enewuser hhvm -1 -1 "/var/lib/hhvm" hhvm
-	eend $?
-}
-
 src_prepare()
 {
-	git submodule update --init
+	git submodule update --init --recursive
 }
 
 src_configure()
@@ -89,23 +82,55 @@ src_configure()
 	econf -DCMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}" ${HHVM_OPTS}
 }
 
+pkg_postinst()
+{
+	ebegin "Creating hhvm user and group"
+	enewgroup hhvm
+	enewuser hhvm -1 -1 "/var/lib/hhvm" hhvm
+	eend $?
+}
+
 src_install()
 {
+	# install hhvm binary
 	dobin hphp/hhvm/hhvm
 
+	# install init and conf
+	newinitd "${FILESDIR}/hhvm.initd-r3" hhvm
+	newconfd "${FILESDIR}/hhvm.confd-r3" hhvm
+
+	# install hhvm configuration
+	dodir /etc/hhvm
+	insinto /etc/hhvm
+	newins "${FILESDIR}/config.hdf.dist-r3" config.hdf.dist
+
+	# install documentation
+	dodir /usr/share/hhvm
+	dodir /usr/share/hhvm/doc
+	insinto /usr/share/hhvm/doc
+	doins hphp/doc/*
+
+	# install hack if use flag set
 	if use hack; then
+		# install binaries
 		dobin hphp/hack/bin/hh_client
 		dobin hphp/hack/bin/hh_server
 		dobin hphp/hack/bin/hh_single_type_check
-		dodir "/usr/share/hhvm/hack"
-		cp -a "${S}/hphp/hack/hhi" "${D}/usr/share/hhvm/hack/"
-		cp -a "${S}/hphp/hack/editor-plugins/emacs" "${D}/usr/share/hhvm/hack/"
-		cp -a "${S}/hphp/hack/editor-plugins/vim" "${D}/usr/share/hhvm/hack/"
-	fi
 
-	newinitd "${FILESDIR}"/hhvm.initd-r3 hhvm
-	newconfd "${FILESDIR}"/hhvm.confd-r3 hhvm
-	dodir "/etc/hhvm"
-	insinto /etc/hhvm
-	newins "${FILESDIR}"/config.hdf.dist-r3 config.hdf.dist
+		# create share directory
+		dodir /usr/share/hhvm/hack
+
+		# install hhi
+		dodir /usr/share/hhvm/hack/hhi
+		insinto /usr/share/hhvm/hack/hhi
+		doins hphp/hack/hhi/*
+
+		# install editor plugins
+		dodir /usr/share/hhvm/hack/emacs
+		insinto /usr/share/hhvm/hack/emacs
+		doins hphp/hack/editor-plugins/emacs/*
+		dodir /usr/share/hhvm/hack/vim
+		insinto /usr/share/hhvm/hack/vim
+		doins hphp/hack/editor-plugins/vim/*
+	fi
 }
