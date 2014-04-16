@@ -1,4 +1,4 @@
-Gentoo Portage Overlay [javer]
+Gentoo Portage Overlay
 =========================================
 
 Package Tree
