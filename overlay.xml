@@ -4,13 +4,13 @@
   <repo quality="experimental" status="unofficial">
     <name><![CDATA[barracuda]]></name>
     <description><![CDATA[barracuda overlay]]></description>
-    <homepage>https://github.com/barracuda/gentoo-overlay</homepage>
+    <homepage>https://github.com/barracudanetworks/gentoo-overlay</homepage>
     <owner type="person">
       <email>troman@barracuda.com</email>
       <name><![CDATA[Tony Roman]]></name>
     </owner>
-    <source type="git">git://github.com/barracuda/gentoo-overlay.git</source>
-    <source type="git">https://github.com/barracuda/gentoo-overlay.git</source>
-    <feed>https://github.com/barracuda/gentoo-overlay/commits/master.atom</feed>
+    <source type="git">git://github.com/barracudanetworks/gentoo-overlay.git</source>
+    <source type="git">https://github.com/barracudanetworks/gentoo-overlay.git</source>
+    <feed>https://github.com/barracudanetworks/gentoo-overlay/commits/master.atom</feed>
   </repo> 
 </repositories>
