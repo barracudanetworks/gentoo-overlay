@@ -132,5 +132,10 @@ src_install()
 		dodir /usr/share/hhvm/hack/vim
 		insinto /usr/share/hhvm/hack/vim
 		doins hphp/hack/editor-plugins/vim/*
+
+		# install hack tools
+		dodir /usr/share/hhvm/hack/tools
+		insinto /usr/share/hhvm/hack/tools
+		doins hphp/hack/tools/*
 	fi
 }
